@@ -1,0 +1,35 @@
+name: Pull and Push Example
+
+on:
+  push:
+    branches:
+      - main  # Trigger workflow on pushes to the main branch
+
+jobs:
+  pull-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Make a modification (create a new file)
+      - name: Create a new file
+        run: |
+          echo "This is a new file created by GitHub Actions" > new-file.txt
+
+      # Step 3: Commit the changes
+      - name: Commit changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Add new file via GitHub Actions"
+
+      # Step 4: Push the changes back to GitHub
+      - name: Push changes
+        env:
+          TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          git push https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.git HEAD:main
